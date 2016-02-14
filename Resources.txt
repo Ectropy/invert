@@ -1,11 +1,10 @@
-http://stackoverflow.com/questions/20618355/the-simplest-possible-javascript-countdown-timer
+Helpful links for techniques used in this app.
 
+http://stackoverflow.com/questions/20618355/the-simplest-possible-javascript-countdown-timer
 
 http://www.html5rocks.com/en/tutorials/offline/whats-offline/
 
-
 http://www.html5rocks.com/en/tutorials/appcache/beginner/
-
 
 http://www.w3schools.com/html/html5_webstorage.asp
 
