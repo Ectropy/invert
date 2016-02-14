@@ -1,0 +1,1 @@
+It possible to set a buy value less than 1 gp (including negatives) if you apply the rule too many times.
