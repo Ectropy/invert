@@ -1,9 +1,12 @@
+//(function (global) { //An Immediately Invoked Function Expression (IIFE) that contains the app's main code. This breaks onclick events!
+//'use strict'; //This code isn't ready to be subjected to "strict"
+
 //Set up the selectize.
 $('#itemName').selectize({
   create: true,
   lockOptgroupOrder: true,
   onChange:function(value){
-      $("#purchaseLimit").text("Purchase Limit: " + getItemBuyLimit(value))
+      $("#purchaseLimit").text("Purchase Limit: " + getItemBuyLimit(value));
   }
 });
 
@@ -12,9 +15,9 @@ onload = function(){
   var flips = loadFlips();
   console.log(flips);
   var index = localStorage.getItem("index");
-  if (index != null){
-      for (i=1; i <= index; i++){
-          if (flips[i] != null){ //skip if this flip has been deleted and has no info.
+  if (index !== null){
+      for (var i=1; i <= index; i++){
+          if (flips[i] !== null){ //skip if this flip has been deleted and has no info.
           displayFlip(flips[i], i); //otherwise display it.
           }
       }
@@ -49,7 +52,7 @@ function recalculateMargins() {
   $('#cost').text(totalCost.toLocaleString() + " gp");
   $('#revenue').text(totalRevenue.toLocaleString() + " gp");
   $('#totalProfit').text(totalProfit.toLocaleString() + " gp");
-};
+}
 
 //A list of items and their buy limits. A selectize can't store data- in itself, so we use this function instead,
 //and lookup the info via known itemAbbreviations.
@@ -131,9 +134,9 @@ function addFlipClick() {
   var stringFlip = JSON.stringify(flip);
 
   if(typeof(Storage) !== "undefined") {
-      if (localStorage.getItem("index") == null) //if there isn't an index yet
+      if (localStorage.getItem("index") === null) //if there isn't an index yet
       {
-          console.log("no index")
+          console.log("no index");
           localStorage.setItem("index", "1"); //set up the index with an intital value
           storeFlipInfo(stringFlip, "1");
           clearNewFlipForm();
@@ -145,8 +148,8 @@ function addFlipClick() {
       }
       else
       {
-          var currIndex = parseInt(localStorage.getItem("index")) + 1 //otherwise increment it's current value by 1
-          console.log("index of " + currIndex)
+          var currIndex = parseInt(localStorage.getItem("index")) + 1; //otherwise increment it's current value by 1
+          console.log("index of " + currIndex);
           localStorage.setItem("index",currIndex);
           storeFlipInfo(stringFlip, currIndex);
           clearNewFlipForm();
@@ -157,7 +160,7 @@ function addFlipClick() {
            });
       }
   } else {
-      alert("We can't store this info in localStorage, because your browser doesn't support it. Please, update to a modern browser to take advantage of Invert's full capabilities.")
+      alert("We can't store this info in localStorage, because your browser doesn't support it. Please, update to a modern browser to take advantage of Invert's full capabilities.");
   }
 }
 
@@ -169,10 +172,11 @@ function storeFlipInfo(stringFlip, index) {
   $("#flipsPanels").html("");
   var flips = loadFlips();
   console.log(flips);
-  var index = localStorage.getItem("index");
-  if (index != null){
-      for (i=1; i <= index; i++){
-          if (flips[i] != null){ //skip if this flip has been deleted and has no info.
+  var pointer = localStorage.getItem("index");
+
+  if (pointer !== null){
+      for (var i=1; i <= pointer; i++){
+          if (flips[i] !== null){ //skip if this flip has been deleted and has no info.
           displayFlip(flips[i], i); //otherwise display it.
           }
       }
@@ -182,38 +186,38 @@ function storeFlipInfo(stringFlip, index) {
 function clearNewFlipForm() {
   $('#itemName').selectize()[0].selectize.clear();//reset selectize
   $('#newFlipForm').trigger("reset"); //reset most other fields
-  recalculateMargins() //adjust margins based on resetted form fields.
+  recalculateMargins(); //adjust margins based on resetted form fields.
 }
 
 function loadFlips() {
   var index = localStorage.getItem("index");
   var arrayOfFlips = [];
-  if (index != null){ //don't bother loading if there is no index set up. That means there shouldn't be any flips either.
+  if (index !== null){ //don't bother loading if there is no index set up. That means there shouldn't be any flips either.
 
       var foundAnArchivedFlip = false;
       var foundACurrentFlip = false;
       for (var i=1; i <= index; i++) {
           arrayOfFlips[i] = getFlip(i); //parse the string back into an object.
-          if (getFlip(i) != null)
+          if (getFlip(i) !== null)
           {
-              if (getFlip(i).archived == false){
+              if (getFlip(i).archived === false){
               foundACurrentFlip = true;
               }
-              if (getFlip(i).archived == true){
+              if (getFlip(i).archived === true){
               foundAnArchivedFlip = true;
               }
           }
       }
       //There are cases where no flips of certain types were found. These ifs are how we handle those cases.
-      if (foundAnArchivedFlip == false && foundACurrentFlip == false){
+      if (foundAnArchivedFlip === false && foundACurrentFlip === false){
           $("#flipsPanels").append("<h3>It's lonely in here.</h3><p>It looks like you haven't created any flips yet.</p><p>Try adding a new one and it will be displayed in this area.</p>");
       }
       else
           {
-          if (foundACurrentFlip == false) {
+          if (foundACurrentFlip === false) {
               $("#flipsPanels").append("<span class=\"current currentNotification\"><h3>It's lonely in here.</h3><p>It looks like there aren't any current flips.</p><p>Try checking the \"All\" tab to see every flip in the system.</p></span>");
           }
-          if (foundAnArchivedFlip == false){
+          if (foundAnArchivedFlip === false){
               $("#flipsPanels").append("<span class=\"archived archivedNotification\"><h3>It's lonely in here.</h3><p>It looks like there aren't any archived flips.</p><p>Try checking the \"All\" tab to see every flip in the system.</p></span>");
           }
       }
@@ -244,7 +248,7 @@ function formatPrice(price) {
 
 function displayFlip(flip, index) {
   var html="";
-  if (flip.archived == false){ //apply appropriate class
+  if (flip.archived === false){ //apply appropriate class
       if (flip.sellCompleted != "no")
       {
           html += "<div id=\"f" + index +"\" class=\"panel panel-success current\" >";
@@ -254,12 +258,12 @@ function displayFlip(flip, index) {
           html += "<div id=\"f" + index +"\" class=\"panel panel-info current\" >";
       }
   }
-  else if (flip.archived == true)
+  else if (flip.archived === true)
   {
   html += "<div id=\"f" + index +"\" class=\"panel panel-default archived\" >";
   }
   html += "<div class=\"panel-heading\">";
-  html += "<h3 class=\"panel-title\">" + flip.itemName +" <button class=\"btn btn-xs btn-danger pull-right\" onClick=\"btnDelete('f"+index+"')\"><span class=\"glyphicon glyphicon-trash\"><\/span>"
+  html += "<h3 class=\"panel-title\">" + flip.itemName +" <button class=\"btn btn-xs btn-danger pull-right\" onClick=\"btnDelete('f"+index+"')\"><span class=\"glyphicon glyphicon-trash\"><\/span>";
   html+= "<span class=\"hidden-xs\">&nbsp; Delete Flip</span>";
   html += "<\/button><\/h3>";
   html += "<\/div>";
@@ -267,7 +271,7 @@ function displayFlip(flip, index) {
 
   if (flip.buyCompleted == "no") //If the buying is not done.
   {
-  html += "<p>Status: Currently buying this item.</p>"
+  html += "<p>Status: Currently buying this item.</p>";
 
   html += "<button class=\"btn btn-block btn-warning btnApplyRuleBuy\" data-id=\"f" + index + "\"><span class=\"glyphicon glyphicon-repeat pull-left\"><\/span>";
   html+= "<span class=\"hidden-xs\">Apply Rule (Buy for +25k gp, time +30 min)</span>";
@@ -287,18 +291,18 @@ function displayFlip(flip, index) {
 
   if (flip.buyCompleted != "no" && flip.sellCompleted == "no") //If the buying is done, but the selling is not.
   {
-  html += "<p>Status: Buying completed, currently selling this item.</p>"
+  html += "<p>Status: Buying completed, currently selling this item.</p>";
   if (getItemBuyLimit(flip.itemAbbreviation) != "Unknown")
   {
-      html += "<p>You can use the autogenerated text below to report your flip in the Flipchat1 Friends Chat channel.</p>"
+      html += "<p>You can use the autogenerated text below to report your flip in the Flipchat1 Friends Chat channel.</p>";
   }
   else
   {
-      html += "<p>This doesn't appear to be an item that Flipchat1 price checks. You shouldn't report it in the Friends Chat channel.</p>"
+      html += "<p>This doesn't appear to be an item that Flipchat1 price checks. You shouldn't report it in the Friends Chat channel.</p>";
   }
 
-  html += "<label>Buying Report:</label><textfield class=\"form-control\" rows=\"1\" onclick=\"this.select()\">"+flip.itemAbbreviation + " " + flip.buyCompleted + " @ " + formatPrice(flip.buy)
-  if (flip.timesRuleAppliedBuy != 0){
+  html += "<label>Buying Report:</label><textfield class=\"form-control\" rows=\"1\" onclick=\"this.select()\">"+flip.itemAbbreviation + " " + flip.buyCompleted + " @ " + formatPrice(flip.buy);
+  if (flip.timesRuleAppliedBuy !== 0){
   html += " rx" + flip.timesRuleAppliedBuy;
   }
   if (flip.buyCompleted == "nib")
@@ -323,19 +327,19 @@ function displayFlip(flip, index) {
   html += "<\/button>";
   }
 
-  if (flip.sellCompleted != "no" && flip.archived == false) //If buying and selling is completed, but the flip isn't archived.
+  if (flip.sellCompleted != "no" && flip.archived === false) //If buying and selling is completed, but the flip isn't archived.
   {
-  html += "<p>Status: Buying and selling completed!</p>"
+  html += "<p>Status: Buying and selling completed!</p>";
   if (getItemBuyLimit(flip.itemAbbreviation) != "Unknown")
   {
-      html += "<p>You can use the autogenerated text below to report your flip in the Flipchat1 Friends Chat channel.</p>"
+      html += "<p>You can use the autogenerated text below to report your flip in the Flipchat1 Friends Chat channel.</p>";
   }
   else
   {
-      html += "<p>This doesn't appear to be an item that Flipchat1 price checks. You shouldn't report it in the Friends Chat channel.</p>"
+      html += "<p>This doesn't appear to be an item that Flipchat1 price checks. You shouldn't report it in the Friends Chat channel.</p>";
   }
-  html += "<label>Buying Report:</label><textfield class=\"form-control\" rows=\"1\" onclick=\"this.select()\">"+flip.itemAbbreviation + " " + flip.buyCompleted + " @ " + formatPrice(flip.buy)
-  if (flip.timesRuleAppliedBuy != 0){
+  html += "<label>Buying Report:</label><textfield class=\"form-control\" rows=\"1\" onclick=\"this.select()\">"+flip.itemAbbreviation + " " + flip.buyCompleted + " @ " + formatPrice(flip.buy);
+  if (flip.timesRuleAppliedBuy !== 0){
   html += " rx" + flip.timesRuleAppliedBuy;
   }
   if (flip.buyCompleted == "nib")
@@ -343,8 +347,8 @@ function displayFlip(flip, index) {
   html += " ?? minutes";
   }
   html += "</textfield><br>";
-  html += "<label>Selling Report:</label><textfield class=\"form-control\" rows=\"1\" onclick=\"this.select()\">"+flip.itemAbbreviation + " " + flip.sellCompleted + " @ " + formatPrice(flip.sell)
-  if (flip.timesRuleAppliedSell != 0){
+  html += "<label>Selling Report:</label><textfield class=\"form-control\" rows=\"1\" onclick=\"this.select()\">"+flip.itemAbbreviation + " " + flip.sellCompleted + " @ " + formatPrice(flip.sell);
+  if (flip.timesRuleAppliedSell !== 0){
   html += " rx" + flip.timesRuleAppliedSell;
   }
   if (flip.sellCompleted == "nis")
@@ -359,19 +363,19 @@ function displayFlip(flip, index) {
   html += "<\/button>";
   }
 
-  if(flip.archived == true) //if the flip has been archived.
+  if(flip.archived === true) //if the flip has been archived.
   {
-  html += "<p>Status: Archived. (Buying and selling complete.)</p>"
+  html += "<p>Status: Archived. (Buying and selling complete.)</p>";
   if (getItemBuyLimit(flip.itemAbbreviation) != "Unknown")
   {
-      html += "<p>You can use the autogenerated text below to report your flip in the Flipchat1 Friends Chat channel.</p>"
+      html += "<p>You can use the autogenerated text below to report your flip in the Flipchat1 Friends Chat channel.</p>";
   }
   else
   {
-      html += "<p>This doesn't appear to be an item that Flipchat1 price checks. You shouldn't report it in the Friends Chat channel.</p>"
+      html += "<p>This doesn't appear to be an item that Flipchat1 price checks. You shouldn't report it in the Friends Chat channel.</p>";
   }
-  html += "<label>Buying Report:</label><textfield class=\"form-control\" rows=\"1\" onclick=\"this.select()\">"+flip.itemAbbreviation + " " + flip.buyCompleted + " @ " + formatPrice(flip.buy)
-  if (flip.timesRuleAppliedBuy != 0){
+  html += "<label>Buying Report:</label><textfield class=\"form-control\" rows=\"1\" onclick=\"this.select()\">"+flip.itemAbbreviation + " " + flip.buyCompleted + " @ " + formatPrice(flip.buy);
+  if (flip.timesRuleAppliedBuy !== 0){
   html += " rx" + flip.timesRuleAppliedBuy;
   }
   if (flip.buyCompleted == "nib")
@@ -379,8 +383,8 @@ function displayFlip(flip, index) {
   html += " ?? minutes";
   }
   html += "</textfield><br>";
-  html += "<label>Selling Report:</label><textfield class=\"form-control\" rows=\"1\" onclick=\"this.select()\">"+flip.itemAbbreviation + " " + flip.sellCompleted + " @ " + formatPrice(flip.sell)
-  if (flip.timesRuleAppliedSell != 0){
+  html += "<label>Selling Report:</label><textfield class=\"form-control\" rows=\"1\" onclick=\"this.select()\">"+flip.itemAbbreviation + " " + flip.sellCompleted + " @ " + formatPrice(flip.sell);
+  if (flip.timesRuleAppliedSell !== 0){
   html += " rx" + flip.timesRuleAppliedSell;
   }
   if (flip.sellCompleted == "nis")
@@ -430,7 +434,7 @@ function displayFlip(flip, index) {
   html += "<\/tr>";
   html += "<tr>";
   html += "<th scope=\"row\">Timer<\/th>";
-  html += "<td>"
+  html += "<td>";
   html += "<div id=\"clockdivf" + index + "\">";
   html += "  <div>";
   html += "    <span class=\"days\"><\/span>";
@@ -461,8 +465,6 @@ function displayFlip(flip, index) {
 
 // Timer related functions _______________________________________________
 function addMinutes(date, minutes) {
-  console.log(date);
-  console.log(minutes);
   return new Date(date.getTime() + minutes*60000);
 }
 
@@ -542,9 +544,9 @@ function btnDelete(flipIndex){
       var flips = loadFlips();
       console.log(flips);
       var index = localStorage.getItem("index");
-      if (index != null){
-          for (i=1; i <= index; i++){
-              if (flips[i] != null){ //skip if this flip has been deleted and has no info.
+      if (index !== null){
+          for (var i=1; i <= index; i++){
+              if (flips[i] !== null){ //skip if this flip has been deleted and has no info.
               displayFlip(flips[i], i); //otherwise display it.
               }
           }
@@ -703,7 +705,7 @@ $("#flipsPanels").on("click",".btnBuyEdit",
       var flipId = $(this).data('id');
       makeAreaEditable("buy", flipId);
       //Change the buy button into a save button.
-      console.log(this)
+      console.log(this);
       $(this).removeClass("btnBuyEdit");
       $(this).addClass("btnBuySave");
       $(this).html('<span class="glyphicon glyphicon-floppy-disk"></span>');
@@ -721,14 +723,14 @@ function makeAreaEditable(type, flipId)
   text = stripNonNumeric(text);
   var editableArea = $("#"+type+flipId);
   editableArea.replaceWith('<input type=\"text\" class="form-control" id="'+type+flipId+'">'+text+'</input>');
-};
+}
 
 //Function accepts a string and removes any character that is not a number.
 //Note that it won't correctly convert negative numbers or decimals, since the "-", and "." will be removed.
 function stripNonNumeric(text){
   text = text.replace(/\D/g,'');
   return text;
-};
+}
 
 function saveEdit(type,flipId){
   var newValue = $("#"+type+flipId).text();
@@ -740,7 +742,7 @@ function saveEdit(type,flipId){
   }
   console.log(thisFlip.buy);
   localStorage.setItem(flipId,JSON.stringify(thisFlip));
-  console.log(newValue + " written")
+  console.log(newValue + " written");
 
 
 
@@ -750,7 +752,7 @@ function saveEdit(type,flipId){
   //var targetArea = button.parent().find('textarea');
   //var textid = target.name;
   //targetArea.replaceWith("<li id='"+textid+"' style='list-style-type:none;'>"+text+"</li>");
-};
+}
 
 $("#flipsPanels").on("click",".btnSellEdit",
   function(){
@@ -825,3 +827,5 @@ function toggleTabs(tabToToggle){
       $(".archived").toggle(true);
   }
 }
+
+//})(window);
