@@ -4,7 +4,7 @@
 //Set up the selectize.
 $('#itemName').selectize({
   create: true,
-  lockOptgroupOrder: true,
+  //lockOptgroupOrder: true,
   onChange:function(value){
       $("#purchaseLimit").text("Purchase Limit: " + getItemBuyLimit(value));
   }
@@ -14,7 +14,7 @@ $('#itemName').selectize({
 onload = function(){
   var flips = loadFlips();
   console.log(flips);
-  var index = localStorage.getItem("index");
+  var index = localStorage.getItem("INVERTindex");
   if (index !== null){
       for (var i=1; i <= index; i++){
           if (flips[i] !== null){ //skip if this flip has been deleted and has no info.
@@ -120,24 +120,24 @@ function addFlipClick() {
   var buy = $('#buyFor').val();
   var sell = $('#sellFor').val();
   var quantity = $('#quantity').val();
-  var timestamp = new Date();
+  var buyStartedTime = new Date();
   var timerDuration = $('#timerDuration').val();
-  var timerEnd = addMinutes(timestamp, timerDuration);
-  var timesRuleAppliedBuy = 0;
-  var timesRuleAppliedSell = 0;
+  var timerEnd = addMinutes(buyStartedTime, timerDuration);
+  var buyTimesRuleApplied = 0;
+  var sellTimesRuleApplied = 0;
 
   //ensure that all required fields are filled out.
 
   //create an object storing flip info.
-  var flip = {itemName: itemName, itemAbbreviation: itemAbbreviation, itemBuyLimit: itemBuyLimit, buy: buy, sell: sell, quantity: quantity, timestamp: timestamp, timerDuration: timerDuration, timerEnd: timerEnd, timesRuleAppliedBuy: timesRuleAppliedBuy, timesRuleAppliedSell: timesRuleAppliedSell, buyCompleted: "no", sellCompleted: "no", archived: false};
+  var flip = {itemName: itemName, itemAbbreviation: itemAbbreviation, itemBuyLimit: itemBuyLimit, buy: buy, sell: sell, quantity: quantity, buyStartedTime: buyStartedTime, timerDuration: timerDuration, timerEnd: timerEnd, buyTimesRuleApplied: buyTimesRuleApplied, sellTimesRuleApplied: sellTimesRuleApplied, buyCompleted: "no", sellCompleted: "no", archived: false};
   //stringify the object for storage inside of localStorage
   var stringFlip = JSON.stringify(flip);
 
   if(typeof(Storage) !== "undefined") {
-      if (localStorage.getItem("index") === null) //if there isn't an index yet
+      if (localStorage.getItem("INVERTindex") === null) //if there isn't an index yet
       {
           console.log("no index");
-          localStorage.setItem("index", "1"); //set up the index with an intital value
+          localStorage.setItem("INVERTindex", "1"); //set up the index with an intital value
           storeFlipInfo(stringFlip, "1");
           clearNewFlipForm();
           $.notify({message: "Flip added."},
@@ -148,9 +148,9 @@ function addFlipClick() {
       }
       else
       {
-          var currIndex = parseInt(localStorage.getItem("index")) + 1; //otherwise increment it's current value by 1
+          var currIndex = parseInt(localStorage.getItem("INVERTindex")) + 1; //otherwise increment it's current value by 1
           console.log("index of " + currIndex);
-          localStorage.setItem("index",currIndex);
+          localStorage.setItem("INVERTindex",currIndex);
           storeFlipInfo(stringFlip, currIndex);
           clearNewFlipForm();
           $.notify({message: "Flip added."},
@@ -166,13 +166,13 @@ function addFlipClick() {
 
 function storeFlipInfo(stringFlip, index) {
   console.log("storing in " + index);
-  localStorage.setItem("f"+index,stringFlip);
+  localStorage.setItem("INVERTf"+index,stringFlip);
 
   //clear old info, then write updated info
   $("#flipsPanels").html("");
   var flips = loadFlips();
   console.log(flips);
-  var pointer = localStorage.getItem("index");
+  var pointer = localStorage.getItem("INVERTindex");
 
   if (pointer !== null){
       for (var i=1; i <= pointer; i++){
@@ -190,7 +190,7 @@ function clearNewFlipForm() {
 }
 
 function loadFlips() {
-  var index = localStorage.getItem("index");
+  var index = localStorage.getItem("INVERTindex");
   var arrayOfFlips = [];
   if (index !== null){ //don't bother loading if there is no index set up. That means there shouldn't be any flips either.
 
@@ -230,11 +230,11 @@ function loadFlips() {
 }
 
 function getFlip(index) { //for when you have the flip's number like "2"
-  return JSON.parse(localStorage.getItem("f"+index));
+  return JSON.parse(localStorage.getItem("INVERTf"+index));
 }
 
 function getFlipById(id){ //for when you have the flip's id like "f2"
-  return JSON.parse(localStorage.getItem(id));
+  return JSON.parse(localStorage.getItem("INVERT"+id));
 }
 
 function formatPrice(price) {
@@ -302,8 +302,8 @@ function displayFlip(flip, index) {
   }
 
   html += "<label>Buying Report:</label><textfield class=\"form-control\" rows=\"1\" onclick=\"this.select()\">"+flip.itemAbbreviation + " " + flip.buyCompleted + " @ " + formatPrice(flip.buy);
-  if (flip.timesRuleAppliedBuy !== 0){
-  html += " rx" + flip.timesRuleAppliedBuy;
+  if (flip.buyTimesRuleApplied !== 0){
+  html += " rx" + flip.buyTimesRuleApplied;
   }
   if (flip.buyCompleted == "nib")
   {
@@ -339,8 +339,8 @@ function displayFlip(flip, index) {
       html += "<p>This doesn't appear to be an item that Flipchat1 price checks. You shouldn't report it in the Friends Chat channel.</p>";
   }
   html += "<label>Buying Report:</label><textfield class=\"form-control\" rows=\"1\" onclick=\"this.select()\">"+flip.itemAbbreviation + " " + flip.buyCompleted + " @ " + formatPrice(flip.buy);
-  if (flip.timesRuleAppliedBuy !== 0){
-  html += " rx" + flip.timesRuleAppliedBuy;
+  if (flip.buyTimesRuleApplied !== 0){
+  html += " rx" + flip.buyTimesRuleApplied;
   }
   if (flip.buyCompleted == "nib")
   {
@@ -348,8 +348,8 @@ function displayFlip(flip, index) {
   }
   html += "</textfield><br>";
   html += "<label>Selling Report:</label><textfield class=\"form-control\" rows=\"1\" onclick=\"this.select()\">"+flip.itemAbbreviation + " " + flip.sellCompleted + " @ " + formatPrice(flip.sell);
-  if (flip.timesRuleAppliedSell !== 0){
-  html += " rx" + flip.timesRuleAppliedSell;
+  if (flip.sellTimesRuleApplied !== 0){
+  html += " rx" + flip.sellTimesRuleApplied;
   }
   if (flip.sellCompleted == "nis")
   {
@@ -375,8 +375,8 @@ function displayFlip(flip, index) {
       html += "<p>This doesn't appear to be an item that Flipchat1 price checks. You shouldn't report it in the Friends Chat channel.</p>";
   }
   html += "<label>Buying Report:</label><textfield class=\"form-control\" rows=\"1\" onclick=\"this.select()\">"+flip.itemAbbreviation + " " + flip.buyCompleted + " @ " + formatPrice(flip.buy);
-  if (flip.timesRuleAppliedBuy !== 0){
-  html += " rx" + flip.timesRuleAppliedBuy;
+  if (flip.buyTimesRuleApplied !== 0){
+  html += " rx" + flip.buyTimesRuleApplied;
   }
   if (flip.buyCompleted == "nib")
   {
@@ -384,8 +384,8 @@ function displayFlip(flip, index) {
   }
   html += "</textfield><br>";
   html += "<label>Selling Report:</label><textfield class=\"form-control\" rows=\"1\" onclick=\"this.select()\">"+flip.itemAbbreviation + " " + flip.sellCompleted + " @ " + formatPrice(flip.sell);
-  if (flip.timesRuleAppliedSell !== 0){
-  html += " rx" + flip.timesRuleAppliedSell;
+  if (flip.sellTimesRuleApplied !== 0){
+  html += " rx" + flip.sellTimesRuleApplied;
   }
   if (flip.sellCompleted == "nis")
   {
@@ -435,23 +435,7 @@ function displayFlip(flip, index) {
   html += "<tr>";
   html += "<th scope=\"row\">Timer<\/th>";
   html += "<td>";
-  html += "<div id=\"clockdivf" + index + "\">";
-  html += "  <div>";
-  html += "    <span class=\"days\"><\/span>";
-  html += "    <div class=\"smalltext\">Days<\/div>";
-  html += "  <\/div>";
-  html += "  <div>";
-  html += "    <span class=\"hours\"><\/span>";
-  html += "    <div class=\"smalltext\">Hours<\/div>";
-  html += "  <\/div>";
-  html += "  <div>";
-  html += "    <span class=\"minutes\"><\/span>";
-  html += "    <div class=\"smalltext\">Minutes<\/div>";
-  html += "  <\/div>";
-  html += "  <div>";
-  html += "    <span class=\"seconds\"><\/span>";
-  html += "    <div class=\"smalltext\">Seconds<\/div>";
-  html += "  <\/div>";
+  html += "<div id=\"timerDivf" + index + "\"><\/div>";
   html += "<\/td>";
   html += "<td><button class=\"btn btn-xs btn-info btnAdd30min pull-right\" data-id=\"f" + index + "\" type=\"button\"><span class=\"glyphicon glyphicon-plus-sign\"></span> 30 min</button><\/td>";
   html += "<\/tr>";
@@ -460,7 +444,7 @@ function displayFlip(flip, index) {
   html += "<\/div>";
   //helpful tool for making strings out of html like this: http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-convertor/
   $("#flipsPanels").append(html);
-  initializeClock('clockdivf' + index, flip.timerEnd);
+  initializeTimer('timerDivf' + index, flip.timerEnd, flip.buyStartedTime);
 }
 
 // Timer related functions _______________________________________________
@@ -484,39 +468,94 @@ return {
 };
 }
 
-function initializeClock(id, endtime) {
-var clock = document.getElementById(id);
-var daysSpan = clock.querySelector('.days');
-var hoursSpan = clock.querySelector('.hours');
-var minutesSpan = clock.querySelector('.minutes');
-var secondsSpan = clock.querySelector('.seconds');
+function getTimeElapsed(buyStartedTime) {
+var t = Date.parse(new Date()) - Date.parse(buyStartedTime);
+var seconds = Math.floor((t / 1000) % 60);
+var minutes = Math.floor((t / 1000 / 60) % 60);
+var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+var days = Math.floor(t / (1000 * 60 * 60 * 24));
+return {
+  'total': t,
+  'days': days,
+  'hours': hours,
+  'minutes': minutes,
+  'seconds': seconds
+};
+}
 
-function updateClock() {
-  var t = getTimeRemaining(endtime);
-    //console.log(t);
+function initializeTimer(id, endtime, buyStartedTime) {
+var timer = document.getElementById(id);
+
+function updateTimer() {
+    var t = getTimeRemaining(endtime);
+    //console.log(t.total);
     //console.log(t.days);
     //console.log(t.hours);
     //console.log(t.minutes);
     //console.log(t.seconds);
 
-  daysSpan.innerHTML = t.days;
-  hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
-  minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
-  secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+    //build string for this timer.
+    var timerString = ""
+    if (t.days > 0){ //hides days if 0
+      timerString += t.days;
+      timerString += ":";
+    }
+    if (t.hours > 0){ //hides hours if 0
+      timerString += ('0' + t.hours).slice(-2);
+      timerString += ":";
+    }
 
-  if (t.total <= 0) {
-      //clearInterval(timeinterval);
-      timerEnded(id);
-  }
+    timerString += ('0' + t.minutes).slice(-2);
+    timerString += ":";
+    timerString += ('0' + t.seconds).slice(-2);
+
+    timer.innerHTML = timerString; //write timer
+
+    if (t.total <= 0) {
+        timerEnded(id);
+    }
 }
 
-updateClock();
-var timeinterval = setInterval(updateClock, 1000);
-}
+updateTimer(); //call once
+var timerInterval = setInterval(updateTimer, 1000); //call repeating.
 
 function timerEnded(id){
-console.log("The timer tied to " + id +" has ended.");
+  clearInterval(timerInterval)
+  console.log("The timer tied to " + id +" has ended.");
+  timer.innerHTML = "DONE"
+
+  //Start showing elapsed time since start.
+  updateElapsed(); //call once
+  var elapsedInterval = setInterval(updateElapsed, 1000); //call repeating.
 }
+
+function updateElapsed() {
+    var t = getTimeElapsed(buyStartedTime);
+    //console.log(t.total);
+    //console.log(t.days);
+    //console.log(t.hours);
+    //console.log(t.minutes);
+    //console.log(t.seconds);
+
+    //build string for this timer.
+    var timerString = ""
+    if (t.days > 0){ //hides days if 0
+      timerString += t.days;
+      timerString += ":";
+    }
+    if (t.hours > 0){ //hides hours if 0
+      timerString += ('0' + t.hours).slice(-2);
+      timerString += ":";
+    }
+    timerString += ('0' + t.minutes).slice(-2);
+    timerString += ":";
+    timerString += ('0' + t.seconds).slice(-2);
+
+    timer.innerHTML = "DONE (Total Elapsed " + timerString +")"; //write timer
+}
+}
+
+
 
 
 //CLICK HANDLERS for every single flip's buttons.
@@ -538,12 +577,12 @@ function btnDelete(flipIndex){
   });
 
   function  callback(){
-      localStorage.removeItem(flipIndex);
+      localStorage.removeItem("INVERT"+flipIndex);
       //clear old info, then write updated info
       $("#flipsPanels").html("");
       var flips = loadFlips();
       console.log(flips);
-      var index = localStorage.getItem("index");
+      var index = localStorage.getItem("INVERTindex");
       if (index !== null){
           for (var i=1; i <= index; i++){
               if (flips[i] !== null){ //skip if this flip has been deleted and has no info.
@@ -568,7 +607,7 @@ $("#flipsPanels").on("click",".btnApplyRuleBuy",
   thisflip.buy = parseInt(thisflip.buy) + 25000;
   thisflip.timerDuration = parseInt(thisflip.timerDuration) + 30;
   thisflip.timerEnd = addMinutes(new Date(thisflip.timerEnd), 30);
-  thisflip.timesRuleAppliedBuy = thisflip.timesRuleAppliedBuy + 1;
+  thisflip.buyTimesRuleApplied = thisflip.buyTimesRuleApplied + 1;
   //stringify the object for storage inside of localStorage
   var stringFlip = JSON.stringify(thisflip);
   //write the flip back into localStorage
@@ -608,6 +647,7 @@ $("#flipsPanels").on("click",".btnNib",
   var thisflip = getFlipById($(this).data('id'));
   //update the values to what we want them to be.
   thisflip.buyCompleted = "nib";
+  thisflip.buyCompletedTime = new Date();
   //stringify the object for storage inside of localStorage
   var stringFlip = JSON.stringify(thisflip);
   //write the flip back into localStorage
@@ -629,7 +669,7 @@ $("#flipsPanels").on("click",".btnApplyRuleSell",
   thisflip.buy = parseInt(thisflip.buy) - 25000;
   thisflip.timerDuration = parseInt(thisflip.timerDuration) + 30;
   thisflip.timerEnd = addMinutes(new Date(thisflip.timerEnd), 30);
-  thisflip.timesRuleAppliedSell = thisflip.timesRuleAppliedSell + 1;
+  thisflip.sellTimesRuleApplied = thisflip.sellTimesRuleApplied + 1;
   //stringify the object for storage inside of localStorage
   var stringFlip = JSON.stringify(thisflip);
   //write the flip back into localStorage
@@ -757,13 +797,13 @@ function saveEdit(type,flipId){
 $("#flipsPanels").on("click",".btnSellEdit",
   function(){
       console.log($(this).data('id'));
-      console.log("seal!");
+      console.log("sellEdit!");
   });
 
 $("#flipsPanels").on("click",".btnQuantityEdit",
   function(){
       console.log($(this).data('id'));
-      console.log("qwan!");
+      console.log("quantityEdit!");
   });
 
 $("#flipsPanels").on("click",".btnAdd30min",
