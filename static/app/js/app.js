@@ -274,8 +274,8 @@ function displayFlip(flip, index) {
   html += "<p>Status: Currently buying this item.</p>";
 
   html += "<button class=\"btn btn-block btn-warning btnApplyRuleBuy\" data-id=\"f" + index + "\"><span class=\"glyphicon glyphicon-repeat pull-left\"><\/span>";
-  html+= "<span class=\"hidden-xs\">Apply Rule (Buy for +25k gp, time +30 min)</span>";
-  html+= "<span class=\"visible-xs\">Apply Rule (+25k, +30 min)</span>";
+  html+= "<span class=\"hidden-xs\">Apply Rule (Buy for +50k gp, time +30 min)</span>";
+  html+= "<span class=\"visible-xs\">Apply Rule (+50k, +30 min)</span>";
   html += "<\/button>";
 
   html += "<button class=\"btn btn-block btn-success btnInb\" data-id=\"f" + index + "\"><span class=\"glyphicon glyphicon-fire pull-left\"><\/span>";
@@ -312,8 +312,8 @@ function displayFlip(flip, index) {
   html += "</textfield><br>";
 
   html += "<button class=\"btn btn-block btn-warning btnApplyRuleSell\" data-id=\"f" + index + "\"><span class=\"glyphicon glyphicon-repeat pull-left\"><\/span>";
-  html+= "<span class=\"hidden-xs\"> Apply Rule (Sell Price -25k, time +30min)</span>";
-  html+= "<span class=\"visible-xs\">Apply Rule (-25k, +30 min)</span>";
+  html+= "<span class=\"hidden-xs\"> Apply Rule (Sell Price -50k, time +30min)</span>";
+  html+= "<span class=\"visible-xs\">Apply Rule (-50k, +30 min)</span>";
   html += "<\/button>";
 
   html += "<button class=\"btn btn-block btn-success btnIns\" data-id=\"f" + index + "\"><span class=\"glyphicon glyphicon-fire pull-left\"><\/span>";
@@ -604,7 +604,7 @@ $("#flipsPanels").on("click",".btnApplyRuleBuy",
   //use the id to load the object for this flip.
   var thisflip = getFlipById($(this).data('id'));
   //update the values to what we want them to be.
-  thisflip.buy = parseInt(thisflip.buy) + 25000;
+  thisflip.buy = parseInt(thisflip.buy) + 50000;
   thisflip.timerDuration = parseInt(thisflip.timerDuration) + 30;
   thisflip.timerEnd = addMinutes(new Date(thisflip.timerEnd), 30);
   thisflip.buyTimesRuleApplied = thisflip.buyTimesRuleApplied + 1;
@@ -666,7 +666,7 @@ $("#flipsPanels").on("click",".btnApplyRuleSell",
   //use the id to load the object for this flip.
   var thisflip = getFlipById($(this).data('id'));
   //update the values to what we want them to be.
-  thisflip.buy = parseInt(thisflip.buy) - 25000;
+  thisflip.buy = parseInt(thisflip.buy) - 50000;
   thisflip.timerDuration = parseInt(thisflip.timerDuration) + 30;
   thisflip.timerEnd = addMinutes(new Date(thisflip.timerEnd), 30);
   thisflip.sellTimesRuleApplied = thisflip.sellTimesRuleApplied + 1;
